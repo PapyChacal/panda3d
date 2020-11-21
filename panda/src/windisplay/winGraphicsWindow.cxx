@@ -351,14 +351,27 @@ set_properties_now(WindowProperties &properties) {
     }
   }
 
-  if (properties.has_cursor_hidden()) {
-    bool hide_cursor = properties.get_cursor_hidden();
-    _properties.set_cursor_hidden(hide_cursor);
-    if (_cursor_window == this) {
-      hide_or_show_cursor(hide_cursor);
+  if (properties.has_cursor_type()) {
+    WindowProperties::CursorType cursor_type = properties.get_cursor_type();
+    HCURSOR cursor;
+    _properties.set_cursor_type(cursor_type);
+    if(cursor_type == WindowProperties::CT_hidden)
+      hide_or_show_cursor(true);
+    else {
+      switch(cursor_type) {
+      case WindowProperties::CT_default:
+        cursor = LoadCursor(nullptr, IDC_ARROW); break;
+      case WindowProperties::CT_cross:
+        cursor = LoadCursor(nullptr, IDC_CROSS); break;
+      case WindowProperties::CT_hand:
+        cursor = LoadCursor(nullptr, IDC_HAND); break;
+      case WindowProperties::CT_text:
+        cursor = LoadCursor(nullptr, IDC_IBEAM); break;
+      }
+      cursor = SetCursor(cursor);
     }
 
-    properties.clear_cursor_hidden();
+    properties.clear_cursor_type();
   }
 
   if (properties.has_cursor_filename()) {
