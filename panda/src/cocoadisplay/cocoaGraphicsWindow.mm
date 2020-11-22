@@ -1002,18 +1002,31 @@ set_properties_now(WindowProperties &properties) {
 
   // TODO: support raw mice.
 
-  if (properties.has_cursor_hidden()) {
-    if (properties.get_cursor_hidden() != _properties.get_cursor_hidden()) {
-      if (properties.get_cursor_hidden() && _input->get_pointer().get_in_window()) {
-        [NSCursor hide];
-        _mouse_hidden = true;
-      } else if (_mouse_hidden) {
-        [NSCursor unhide];
-        _mouse_hidden = false;
+  if (properties.has_cursor_type()) {
+    if (properties.get_cursor_type() != _properties.get_cursor_type()) {
+      if(properties.get_cursor_type() == WindowProperties::CT_hidden) {
+        if(_input->get_pointer().get_in_window()) {
+          [NSCursor hide];
+          _mouse_hidden = true;
+        } else {
+          [NSCursor unhide]
+          _mouse_hidden = false;
+        }
+      } else {
+        switch(_properties.get_cursor_type()){
+        case WindowProperties::CT_default:
+          [[NSCursor arrowCursor] set]; break;
+        case WindowProperties::CT_cross:
+          [[NSCursor crosshairCursor] set]; break;
+        case WindowProperties::CT_hand:
+          [[NSCursor openHandCursor] set]; break;
+        case WindowProperties::CT_text:
+          [[NSCursor iBeamCursor] set]; break;
+        }
       }
       _properties.set_cursor_hidden(properties.get_cursor_hidden());
     }
-    properties.clear_cursor_hidden();
+    properties.clear_cursor_type();
   }
 
   if (properties.has_icon_filename()) {
