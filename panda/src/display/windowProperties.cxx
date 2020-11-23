@@ -70,7 +70,7 @@ get_config_properties() {
   props.set_undecorated(undecorated);
   props.set_fixed_size(win_fixed_size);
   props.set_maximized(maximized);
-  props.set_cursor_hidden(cursor_hidden);
+  props.set_cursor_type(cursor_hidden ? WindowProperties::CT_hidden : WindowProperties::CT_default);
   if (!icon_filename.empty()) {
     props.set_icon_filename(icon_filename);
   }
@@ -250,8 +250,8 @@ add_properties(const WindowProperties &other) {
   if (other.has_open()) {
     set_open(other.get_open());
   }
-  if (other.has_cursor_hidden()) {
-    set_cursor_hidden(other.get_cursor_hidden());
+  if (other.has_cursor_type()) {
+    set_cursor_type(other.get_cursor_type());
   }
   if (other.has_icon_filename()) {
     set_icon_filename(other.get_icon_filename());
@@ -309,8 +309,8 @@ output(ostream &out) const {
   if (has_open()) {
     out << (get_open() ? "open " : "!open ");
   }
-  if (has_cursor_hidden()) {
-    out << (get_cursor_hidden() ? "cursor_hidden " : "!cursor_hidden ");
+  if (has_cursor_type()) {
+    out << "cursor type: " << get_cursor_type() << " ";
   }
   if (has_icon_filename()) {
     out << "icon:" << get_icon_filename() << " ";
